@@ -20,9 +20,9 @@ module.exports = {
   // multiple entry points
   entry: {
     main: [
-       "./src/main.js" , // main js file
-       "./src/app.scss"
-    ], 
+      "./src/main.js", // main js file
+      "./src/app.scss",
+    ],
     vendors: "./src/vendors.js", // js vendors like lodash , ramda etc
   },
 
@@ -31,7 +31,7 @@ module.exports = {
     filename: "[name].[hash].js",
     path: path.resolve(__dirname, "dist"),
     clean: true,
-    assetModuleFilename: "images/[hash][ext][query]",
+    assetModuleFilename: "images/[name].[hash].[ext]",
   },
 
   // plugins
@@ -45,10 +45,9 @@ module.exports = {
     }),
 
     // mini css extractor plugin
-    new MiniCssExtractPlugin({ 
-      filename: "/styles/[name].[contenthash].css" 
+    new MiniCssExtractPlugin({
+      filename: "styles/[name].[contenthash].css",
     }),
-
   ].concat(multipleHtmlPlugins),
 
   // modules
@@ -64,7 +63,15 @@ module.exports = {
           MiniCssExtractPlugin.loader,
           //"style-loader" ,
           "css-loader",
-          "sass-loader",
+          {
+            loader: "resolve-url-loader",
+          },
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true,
+            },
+          },
         ],
       },
 
@@ -79,6 +86,9 @@ module.exports = {
       {
         test: /\.(png|jpe?g|gif)$/i,
         type: "asset/resource",
+      },
+
+      {
         test: /\.svg/,
         type: "asset/inline",
       },
@@ -100,3 +110,6 @@ module.exports = {
   type: 'javascript/auto' // needed for webpack 5
 },
 */
+
+// babel and jsx setup
+// minifying and  css
