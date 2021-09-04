@@ -19,7 +19,10 @@ module.exports = {
 
   // multiple entry points
   entry: {
-    main: "./src/main.js", // main js file
+    main: [
+       "./src/main.js" , // main js file
+       "./src/app.scss"
+    ], 
     vendors: "./src/vendors.js", // js vendors like lodash , ramda etc
   },
 
