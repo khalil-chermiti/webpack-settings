@@ -1,7 +1,9 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-
+const HtmlMinimizerPlugin = require("html-minimizer-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 // setting multiple html plugins
 
 let htmlPageNames = []; //pages names
@@ -15,7 +17,7 @@ let multipleHtmlPlugins = htmlPageNames.map((name) => {
 });
 
 module.exports = {
-  mode: "development",
+  mode: "production",
 
   // multiple entry points
   entry: {
@@ -31,7 +33,38 @@ module.exports = {
     filename: "[name].[hash].js",
     path: path.resolve(__dirname, "dist"),
     clean: true,
-    assetModuleFilename: "images/[name].[hash].[ext]",
+    assetModuleFilename: "images/[name].[contenthash].[ext]",
+  },
+
+  optimization: {
+    // minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          format: {
+            comments: false,
+          },
+        },
+        extractComments: false,
+      }),
+      new CssMinimizerPlugin({
+        include: /\/src/,
+        minimizerOptions: {
+          preset: [
+            "default",
+            {
+              discardComments: { removeAll: true },
+            },
+          ],
+        },
+      }),
+      new HtmlMinimizerPlugin({
+        minimizerOptions: {
+          collapseWhitespace: true,
+          removeComments : true ,
+        },
+      }),
+    ],
   },
 
   // plugins
@@ -48,7 +81,7 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "styles/[name].[contenthash].css",
     }),
-  ].concat(multipleHtmlPlugins),
+  ].unshfit(multipleHtmlPlugins), // add unshift instead
 
   // modules
 
@@ -111,5 +144,10 @@ module.exports = {
 },
 */
 
-// babel and jsx setup
-// minifying and  css
+
+/*
+* what should i do : 
+* babel setup 
+* dev server 
+* split dev and production 
+*/
